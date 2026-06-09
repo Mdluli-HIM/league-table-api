@@ -2,31 +2,37 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-import { competitionRoutes } from "./routes/competition.routes.js";
-import { tournamentRoutes } from "./routes/tournament.routes.js";
-import { publicRoutes } from "./routes/public.routes.js";
 
-import { playerRoutes } from "./routes/player.routes.js";
-import { matchRoutes } from "./routes/match.routes.js";
 import { env } from "./config/env.js";
+import { corsOptions } from "./config/cors.js";
 import { healthRoutes } from "./routes/health.routes.js";
 import { seasonRoutes } from "./routes/season.routes.js";
 import { clubRoutes } from "./routes/club.routes.js";
+import { competitionRoutes } from "./routes/competition.routes.js";
+import { playerRoutes } from "./routes/player.routes.js";
+import { matchRoutes } from "./routes/match.routes.js";
+import { tournamentRoutes } from "./routes/tournament.routes.js";
+import { publicRoutes } from "./routes/public.routes.js";
+import { apiRateLimiter } from "./middleware/rate-limit.middleware.js";
 import { notFoundMiddleware } from "./middleware/not-found.middleware.js";
 import { errorMiddleware } from "./middleware/error.middleware.js";
 
 export const app = express();
 
-app.use(helmet());
+app.set("trust proxy", 1);
 
 app.use(
-  cors({
-    origin: "*",
+  helmet({
+    crossOriginResourcePolicy: {
+      policy: "cross-origin",
+    },
   }),
 );
 
+app.use(cors(corsOptions));
+
 app.use(express.json({ limit: "1mb" }));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 
 if (env.NODE_ENV === "development") {
   app.use(morgan("dev"));
@@ -38,12 +44,23 @@ app.get("/", (_req, res) => {
     message: "League Table API",
     data: {
       version: "1.0.0",
-      docs: `${env.API_PREFIX}/health`,
+      environment: env.NODE_ENV,
+      health: `${env.API_PREFIX}/health`,
+      public: {
+        home: `${env.API_PREFIX}/public/home`,
+        clubs: `${env.API_PREFIX}/public/clubs`,
+        fixtures: `${env.API_PREFIX}/public/fixtures`,
+        results: `${env.API_PREFIX}/public/results`,
+        competitions: `${env.API_PREFIX}/public/competitions`,
+      },
     },
   });
 });
 
 app.use(env.API_PREFIX, healthRoutes);
+
+app.use(env.API_PREFIX, apiRateLimiter);
+
 app.use(env.API_PREFIX, seasonRoutes);
 app.use(env.API_PREFIX, clubRoutes);
 app.use(env.API_PREFIX, competitionRoutes);

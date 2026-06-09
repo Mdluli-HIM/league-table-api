@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { Prisma } from "@prisma/client";
+import { env } from "../config/env.js";
 
 export function errorMiddleware(
   error: unknown,
@@ -8,6 +9,17 @@ export function errorMiddleware(
   _next: NextFunction,
 ) {
   console.error(error);
+
+  if (
+    error instanceof Error &&
+    error.message.startsWith("CORS blocked origin")
+  ) {
+    return res.status(403).json({
+      success: false,
+      message: error.message,
+      data: null,
+    });
+  }
 
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     if (error.code === "P2002") {
@@ -29,7 +41,12 @@ export function errorMiddleware(
 
   return res.status(500).json({
     success: false,
-    message: "Internal server error",
+    message:
+      env.NODE_ENV === "production"
+        ? "Internal server error"
+        : error instanceof Error
+          ? error.message
+          : "Internal server error",
     data: null,
   });
 }

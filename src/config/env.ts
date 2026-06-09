@@ -13,6 +13,12 @@ const envSchema = z.object({
   API_PREFIX: z.string().default("/api/v1"),
 
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
+
+  CORS_ORIGIN: z.string().default("http://localhost:3000"),
+
+  RATE_LIMIT_WINDOW_MS: z.coerce.number().default(900000),
+
+  RATE_LIMIT_MAX_REQUESTS: z.coerce.number().default(300),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
@@ -24,3 +30,7 @@ if (!parsedEnv.success) {
 }
 
 export const env = parsedEnv.data;
+
+export const allowedCorsOrigins = env.CORS_ORIGIN.split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
