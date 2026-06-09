@@ -54,6 +54,34 @@ enum NextMatchSlot {
   AWAY
 }
 
+enum AdminRole {
+  SUPER_ADMIN
+  LEAGUE_ADMIN
+  CLUB_ADMIN
+}
+
+enum AdminStatus {
+  ACTIVE
+  DISABLED
+}
+
+model AdminUser {
+  id           String      @id @default(cuid())
+  name         String
+  email        String      @unique
+  passwordHash String
+  role         AdminRole   @default(LEAGUE_ADMIN)
+  status       AdminStatus @default(ACTIVE)
+  lastLoginAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([role])
+  @@index([status])
+}
+
 model Season {
   id        String       @id @default(cuid())
   name      String

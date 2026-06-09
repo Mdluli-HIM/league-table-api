@@ -19,6 +19,21 @@ const envSchema = z.object({
   RATE_LIMIT_WINDOW_MS: z.coerce.number().default(900000),
 
   RATE_LIMIT_MAX_REQUESTS: z.coerce.number().default(300),
+
+  JWT_ACCESS_SECRET: z
+    .string()
+    .min(32, "JWT_ACCESS_SECRET must be at least 32 characters"),
+
+  JWT_ACCESS_EXPIRES_SECONDS: z.coerce.number().default(86400),
+
+  DEFAULT_ADMIN_NAME: z.string().default("Admin User"),
+
+  DEFAULT_ADMIN_EMAIL: z.string().email().default("admin@example.com"),
+
+  DEFAULT_ADMIN_PASSWORD: z
+    .string()
+    .min(8, "DEFAULT_ADMIN_PASSWORD must be at least 8 characters")
+    .default("ChangeMe123!"),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
