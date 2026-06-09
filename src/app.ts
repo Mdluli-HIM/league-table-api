@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
+import { competitionRoutes } from "./routes/competition.routes.js";
 
 import { env } from "./config/env.js";
 import { healthRoutes } from "./routes/health.routes.js";
@@ -41,6 +42,7 @@ app.get("/", (_req, res) => {
 app.use(env.API_PREFIX, healthRoutes);
 app.use(env.API_PREFIX, seasonRoutes);
 app.use(env.API_PREFIX, clubRoutes);
+app.use(env.API_PREFIX, competitionRoutes);
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
