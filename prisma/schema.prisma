@@ -1,0 +1,245 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SeasonStatus {
+  UPCOMING
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+}
+
+enum CompetitionType {
+  LEAGUE
+  KNOCKOUT
+}
+
+enum CompetitionStatus {
+  DRAFT
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+}
+
+enum RegistrationStatus {
+  ACTIVE
+  INACTIVE
+  RELEASED
+}
+
+enum MatchStatus {
+  SCHEDULED
+  LIVE
+  COMPLETED
+  POSTPONED
+  CANCELLED
+}
+
+enum KnockoutRoundType {
+  ROUND_OF_64
+  ROUND_OF_32
+  ROUND_OF_16
+  QUARTER_FINAL
+  SEMI_FINAL
+  FINAL
+}
+
+enum NextMatchSlot {
+  HOME
+  AWAY
+}
+
+model Season {
+  id          String       @id @default(cuid())
+  name        String
+  slug        String       @unique
+  startDate   DateTime
+  endDate     DateTime
+  status      SeasonStatus @default(UPCOMING)
+  isCurrent   Boolean      @default(false)
+
+  competitions       Competition[]
+  playerRegistrations PlayerRegistration[]
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([status])
+  @@index([isCurrent])
+}
+
+model Club {
+  id          String   @id @default(cuid())
+  name        String
+  shortName   String?
+  slug        String   @unique
+  homeGround  String?
+  foundedYear Int?
+  isActive    Boolean  @default(true)
+
+  competitionTeams CompetitionTeam[]
+  playerRegistrations PlayerRegistration[]
+
+  homeMatches   Match[] @relation("HomeClubMatches")
+  awayMatches   Match[] @relation("AwayClubMatches")
+  wonMatches    Match[] @relation("WinnerClubMatches")
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive])
+}
+
+model Player {
+  id        String   @id @default(cuid())
+  firstName String
+  lastName  String
+
+  registrations PlayerRegistration[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([lastName])
+}
+
+model PlayerRegistration {
+  id       String             @id @default(cuid())
+  playerId String
+  clubId   String
+  seasonId String
+  status   RegistrationStatus @default(ACTIVE)
+
+  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  club   Club   @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  season Season @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([playerId, seasonId])
+  @@index([clubId])
+  @@index([seasonId])
+}
+
+model Competition {
+  id        String            @id @default(cuid())
+  seasonId  String
+  name      String
+  slug      String            @unique
+  type      CompetitionType
+  status    CompetitionStatus @default(DRAFT)
+  startDate DateTime?
+  endDate   DateTime?
+
+  season Season @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+
+  teams   CompetitionTeam[]
+  matches Match[]
+  rounds  TournamentRound[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([seasonId])
+  @@index([type])
+  @@index([status])
+}
+
+model CompetitionTeam {
+  id            String @id @default(cuid())
+  competitionId String
+  clubId        String
+  seed          Int?
+
+  competition Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  club        Club        @relation(fields: [clubId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([competitionId, clubId])
+  @@unique([competitionId, seed])
+  @@index([clubId])
+}
+
+model Venue {
+  id      String  @id @default(cuid())
+  name    String
+  address String?
+
+  matches Match[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TournamentRound {
+  id            String            @id @default(cuid())
+  competitionId String
+  name          String
+  roundType     KnockoutRoundType
+  roundOrder    Int
+
+  competition Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  matches     Match[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([competitionId, roundOrder])
+  @@index([competitionId])
+}
+
+model Match {
+  id            String      @id @default(cuid())
+  competitionId String
+  roundId       String?
+  venueId       String?
+
+  homeClubId String?
+  awayClubId String?
+
+  scheduledAt DateTime?
+  matchday    Int?
+
+  homeScore Int?
+  awayScore Int?
+
+  homePenaltyScore Int?
+  awayPenaltyScore Int?
+
+  winnerClubId String?
+
+  status MatchStatus @default(SCHEDULED)
+
+  bracketPosition Int?
+  nextMatchId     String?
+  nextMatchSlot   NextMatchSlot?
+
+  competition Competition      @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  round       TournamentRound? @relation(fields: [roundId], references: [id], onDelete: SetNull)
+  venue       Venue?           @relation(fields: [venueId], references: [id], onDelete: SetNull)
+
+  homeClub   Club? @relation("HomeClubMatches", fields: [homeClubId], references: [id], onDelete: SetNull)
+  awayClub   Club? @relation("AwayClubMatches", fields: [awayClubId], references: [id], onDelete: SetNull)
+  winnerClub Club? @relation("WinnerClubMatches", fields: [winnerClubId], references: [id], onDelete: SetNull)
+
+  nextMatch       Match?  @relation("KnockoutProgression", fields: [nextMatchId], references: [id], onDelete: SetNull)
+  previousMatches Match[] @relation("KnockoutProgression")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([competitionId])
+  @@index([roundId])
+  @@index([homeClubId])
+  @@index([awayClubId])
+  @@index([winnerClubId])
+  @@index([status])
+}
