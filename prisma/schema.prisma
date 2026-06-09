@@ -55,48 +55,48 @@ enum NextMatchSlot {
 }
 
 model Season {
-  id          String       @id @default(cuid())
-  name        String
-  slug        String       @unique
-  startDate   DateTime
-  endDate     DateTime
-  status      SeasonStatus @default(UPCOMING)
-  isCurrent   Boolean      @default(false)
+  id        String       @id @default(cuid())
+  name      String
+  slug      String       @unique
+  startDate DateTime
+  endDate   DateTime
+  status    SeasonStatus @default(UPCOMING)
+  isCurrent Boolean      @default(false)
 
-  competitions       Competition[]
+  competitions        Competition[]
   playerRegistrations PlayerRegistration[]
 
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([status])
   @@index([isCurrent])
 }
 
 model Club {
-  id          String   @id @default(cuid())
+  id          String  @id @default(cuid())
   name        String
   shortName   String?
-  slug        String   @unique
+  slug        String  @unique
   homeGround  String?
   foundedYear Int?
-  isActive    Boolean  @default(true)
+  isActive    Boolean @default(true)
 
-  competitionTeams CompetitionTeam[]
+  competitionTeams    CompetitionTeam[]
   playerRegistrations PlayerRegistration[]
 
-  homeMatches   Match[] @relation("HomeClubMatches")
-  awayMatches   Match[] @relation("AwayClubMatches")
-  wonMatches    Match[] @relation("WinnerClubMatches")
+  homeMatches Match[] @relation("HomeClubMatches")
+  awayMatches Match[] @relation("AwayClubMatches")
+  wonMatches  Match[] @relation("WinnerClubMatches")
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([isActive])
 }
 
 model Player {
-  id        String   @id @default(cuid())
+  id        String @id @default(cuid())
   firstName String
   lastName  String
 
@@ -197,7 +197,7 @@ model TournamentRound {
 }
 
 model Match {
-  id            String      @id @default(cuid())
+  id            String  @id @default(cuid())
   competitionId String
   roundId       String?
   venueId       String?

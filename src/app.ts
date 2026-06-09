@@ -6,6 +6,7 @@ import morgan from "morgan";
 import { env } from "./config/env.js";
 import { healthRoutes } from "./routes/health.routes.js";
 import { seasonRoutes } from "./routes/season.routes.js";
+import { clubRoutes } from "./routes/club.routes.js";
 import { notFoundMiddleware } from "./middleware/not-found.middleware.js";
 import { errorMiddleware } from "./middleware/error.middleware.js";
 
@@ -39,6 +40,7 @@ app.get("/", (_req, res) => {
 
 app.use(env.API_PREFIX, healthRoutes);
 app.use(env.API_PREFIX, seasonRoutes);
+app.use(env.API_PREFIX, clubRoutes);
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
