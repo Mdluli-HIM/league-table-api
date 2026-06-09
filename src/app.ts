@@ -4,6 +4,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import { competitionRoutes } from "./routes/competition.routes.js";
 import { tournamentRoutes } from "./routes/tournament.routes.js";
+import { publicRoutes } from "./routes/public.routes.js";
 
 import { playerRoutes } from "./routes/player.routes.js";
 import { matchRoutes } from "./routes/match.routes.js";
@@ -49,6 +50,7 @@ app.use(env.API_PREFIX, competitionRoutes);
 app.use(env.API_PREFIX, playerRoutes);
 app.use(env.API_PREFIX, matchRoutes);
 app.use(env.API_PREFIX, tournamentRoutes);
+app.use(env.API_PREFIX, publicRoutes);
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
