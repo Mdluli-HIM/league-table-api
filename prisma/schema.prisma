@@ -197,14 +197,17 @@ model CompetitionTeam {
 }
 
 model Venue {
-  id      String  @id @default(cuid())
-  name    String
-  address String?
+  id       String  @id @default(cuid())
+  name     String
+  address  String?
+  isActive Boolean @default(true)
 
   matches Match[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([isActive])
 }
 
 model TournamentRound {

@@ -12,6 +12,7 @@ import { publicRoutes } from "./routes/public.routes.js";
 import { seasonRoutes } from "./routes/season.routes.js";
 import { clubRoutes } from "./routes/club.routes.js";
 import { competitionRoutes } from "./routes/competition.routes.js";
+import { venueRoutes } from "./routes/venue.routes.js";
 import { playerRoutes } from "./routes/player.routes.js";
 import { matchRoutes } from "./routes/match.routes.js";
 import { tournamentRoutes } from "./routes/tournament.routes.js";
@@ -78,5 +79,7 @@ app.use(env.API_PREFIX, competitionRoutes);
 app.use(env.API_PREFIX, playerRoutes);
 app.use(env.API_PREFIX, matchRoutes);
 app.use(env.API_PREFIX, tournamentRoutes);
+app.use(env.API_PREFIX, venueRoutes);
+
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
