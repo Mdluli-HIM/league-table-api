@@ -5,15 +5,20 @@ import morgan from "morgan";
 
 import { env } from "./config/env.js";
 import { corsOptions } from "./config/cors.js";
+
 import { healthRoutes } from "./routes/health.routes.js";
+import { authRoutes } from "./routes/auth.routes.js";
+import { publicRoutes } from "./routes/public.routes.js";
 import { seasonRoutes } from "./routes/season.routes.js";
 import { clubRoutes } from "./routes/club.routes.js";
 import { competitionRoutes } from "./routes/competition.routes.js";
 import { playerRoutes } from "./routes/player.routes.js";
 import { matchRoutes } from "./routes/match.routes.js";
 import { tournamentRoutes } from "./routes/tournament.routes.js";
-import { publicRoutes } from "./routes/public.routes.js";
+import { adminDashboardRoutes } from "./routes/admin-dashboard.routes.js";
+
 import { apiRateLimiter } from "./middleware/rate-limit.middleware.js";
+import { requireAuth } from "./middleware/auth.middleware.js";
 import { notFoundMiddleware } from "./middleware/not-found.middleware.js";
 import { errorMiddleware } from "./middleware/error.middleware.js";
 
@@ -61,13 +66,17 @@ app.use(env.API_PREFIX, healthRoutes);
 
 app.use(env.API_PREFIX, apiRateLimiter);
 
+app.use(env.API_PREFIX, authRoutes);
+app.use(env.API_PREFIX, publicRoutes);
+
+app.use(env.API_PREFIX, requireAuth);
+
+app.use(env.API_PREFIX, adminDashboardRoutes);
 app.use(env.API_PREFIX, seasonRoutes);
 app.use(env.API_PREFIX, clubRoutes);
 app.use(env.API_PREFIX, competitionRoutes);
 app.use(env.API_PREFIX, playerRoutes);
 app.use(env.API_PREFIX, matchRoutes);
 app.use(env.API_PREFIX, tournamentRoutes);
-app.use(env.API_PREFIX, publicRoutes);
-
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
