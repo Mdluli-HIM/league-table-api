@@ -1,0 +1,596 @@
+{
+  "info": {
+    "name": "League Table API",
+    "_postman_id": "league-table-api-collection",
+    "description": "Postman collection for the League Table API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response?.data?.accessToken) {",
+                  "  pm.environment.set('accessToken', response.data.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@league.local\",\n  \"password\": \"AdminPassword123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Current Admin",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Dashboard",
+      "item": [
+        {
+          "name": "Get Dashboard Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "dashboard"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Seasons",
+      "item": [
+        {
+          "name": "Create Season",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response?.data?.id) {",
+                  "  pm.environment.set('seasonId', response.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"2026 Season\",\n  \"startDate\": \"2026-01-01\",\n  \"endDate\": \"2026-12-31\",\n  \"status\": \"ACTIVE\",\n  \"isCurrent\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/seasons",
+              "host": ["{{baseUrl}}"],
+              "path": ["seasons"]
+            }
+          }
+        },
+        {
+          "name": "Get Seasons",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/seasons",
+              "host": ["{{baseUrl}}"],
+              "path": ["seasons"]
+            }
+          }
+        },
+        {
+          "name": "Get Season By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/seasons/{{seasonId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["seasons", "{{seasonId}}"]
+            }
+          }
+        },
+        {
+          "name": "Set Current Season",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/seasons/{{seasonId}}/set-current",
+              "host": ["{{baseUrl}}"],
+              "path": ["seasons", "{{seasonId}}", "set-current"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Clubs",
+      "item": [
+        {
+          "name": "Create Club",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response?.data?.id) {",
+                  "  pm.environment.set('clubId', response.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Mamelodi FC\",\n  \"shortName\": \"MFC\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/clubs",
+              "host": ["{{baseUrl}}"],
+              "path": ["clubs"]
+            }
+          }
+        },
+        {
+          "name": "Get Clubs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/clubs",
+              "host": ["{{baseUrl}}"],
+              "path": ["clubs"]
+            }
+          }
+        },
+        {
+          "name": "Get Club By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/clubs/{{clubId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["clubs", "{{clubId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Players",
+      "item": [
+        {
+          "name": "Create Player",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response?.data?.id) {",
+                  "  pm.environment.set('playerId', response.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Sipho\",\n  \"lastName\": \"Mokoena\",\n  \"dateOfBirth\": \"2002-05-10\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/players",
+              "host": ["{{baseUrl}}"],
+              "path": ["players"]
+            }
+          }
+        },
+        {
+          "name": "Get Players",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/players",
+              "host": ["{{baseUrl}}"],
+              "path": ["players"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Competitions",
+      "item": [
+        {
+          "name": "Create League Competition",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response?.data?.id) {",
+                  "  pm.environment.set('competitionId', response.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Premier League\",\n  \"seasonId\": \"{{seasonId}}\",\n  \"type\": \"LEAGUE\",\n  \"status\": \"ACTIVE\",\n  \"startDate\": \"2026-01-15\",\n  \"endDate\": \"2026-11-30\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/competitions",
+              "host": ["{{baseUrl}}"],
+              "path": ["competitions"]
+            }
+          }
+        },
+        {
+          "name": "Get Competitions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/competitions",
+              "host": ["{{baseUrl}}"],
+              "path": ["competitions"]
+            }
+          }
+        },
+        {
+          "name": "Add Team To Competition",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clubId\": \"{{clubId}}\",\n  \"seed\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/competitions/{{competitionId}}/teams",
+              "host": ["{{baseUrl}}"],
+              "path": ["competitions", "{{competitionId}}", "teams"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Venues",
+      "item": [
+        {
+          "name": "Create Venue",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response?.data?.id) {",
+                  "  pm.environment.set('venueId', response.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Main Stadium\",\n  \"address\": \"Pretoria, Gauteng\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/venues",
+              "host": ["{{baseUrl}}"],
+              "path": ["venues"]
+            }
+          }
+        },
+        {
+          "name": "Get Venues",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/venues",
+              "host": ["{{baseUrl}}"],
+              "path": ["venues"]
+            }
+          }
+        },
+        {
+          "name": "Get Venue By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/venues/{{venueId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["venues", "{{venueId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Matches",
+      "item": [
+        {
+          "name": "Create Match",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response?.data?.id) {",
+                  "  pm.environment.set('matchId', response.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"homeClubId\": \"{{clubId}}\",\n  \"awayClubId\": \"{{clubId}}\",\n  \"venueId\": \"{{venueId}}\",\n  \"scheduledAt\": \"2026-04-20T15:00:00.000Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/competitions/{{competitionId}}/matches",
+              "host": ["{{baseUrl}}"],
+              "path": ["competitions", "{{competitionId}}", "matches"]
+            }
+          }
+        },
+        {
+          "name": "Get Matches",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/matches",
+              "host": ["{{baseUrl}}"],
+              "path": ["matches"]
+            }
+          }
+        },
+        {
+          "name": "Submit Match Result",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"homeScore\": 2,\n  \"awayScore\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/matches/{{matchId}}/result",
+              "host": ["{{baseUrl}}"],
+              "path": ["matches", "{{matchId}}", "result"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Standings",
+      "item": [
+        {
+          "name": "Get League Standings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/competitions/{{competitionId}}/standings",
+              "host": ["{{baseUrl}}"],
+              "path": ["competitions", "{{competitionId}}", "standings"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Public",
+      "item": [
+        {
+          "name": "Public Home",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/public/home",
+              "host": ["{{baseUrl}}"],
+              "path": ["public", "home"]
+            }
+          }
+        },
+        {
+          "name": "Public Fixtures",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/public/fixtures",
+              "host": ["{{baseUrl}}"],
+              "path": ["public", "fixtures"]
+            }
+          }
+        },
+        {
+          "name": "Public Results",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/public/results",
+              "host": ["{{baseUrl}}"],
+              "path": ["public", "results"]
+            }
+          }
+        },
+        {
+          "name": "Public Clubs",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/public/clubs",
+              "host": ["{{baseUrl}}"],
+              "path": ["public", "clubs"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
